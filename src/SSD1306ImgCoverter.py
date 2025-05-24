@@ -17,6 +17,10 @@
 *
 """
 
+##############################-Casuals modules-##############################
+
+import math
+
 ##############################-Processing modules-##############################
 
 from PIL import Image
@@ -27,9 +31,9 @@ from PIL import Image
 *
 """
 
-SSD1306_COLUMN = 128
+PIXEL_IN_BYTE = 8
 WHITE_PIXEL_VALUE = 255
-PIXEL_IN_PAGE = 8
+N_METADATA = 3
 
 """
 *
@@ -39,68 +43,89 @@ PIXEL_IN_PAGE = 8
 
 class SSD1306ImgCoverter:
     
-    def __init__(self, path, w, h, screen_height=64):
+    def __init__(self, screen_height=64):
         
-        self.screen_height = screen_height
+        print("ImgConverter starting...")
         
-        self.img = Image.open(path).convert('1') #Convert image to black & white
-        img_width, img_height = self.img.size #Get image size
-        
-        #Check if the desired image size is valid
-        if w > SSD1306_COLUMN or h > screen_height: 
-            exit(0)
-        
-        #Resize image
-        self.h = h 
-        self.w = w
-        self.img = self.img.resize((w, h))  #Resize to the desired img format
      
-    def __convert_image_to_array(self):
+    ##############################-Convert methodes ( public )-##############################   
+    
+    def convert_BW(self, img_path, w, h):
         
-        self.image_data = []
-        pixels = self.img.load() #Read image content
+        img = Image.open(img_path)
+        img = img.resize((w, h)) #Resize image 
+        img = img.convert('1') #Convert image to black & white
         
-        #Flatten image height pixels into byte
-        for page in range (0, self.h, PIXEL_IN_PAGE):
-            for column in range(self.w):
-                byte = 0
-                for bit in range(PIXEL_IN_PAGE):
-                    y = page + bit
-                    if pixels[column, y] == WHITE_PIXEL_VALUE:
-                        byte |= (1 << bit)
-                self.image_data.append(byte)
+        return img
+    
+    def convert_and_export(self, img_path, w, h, array_name="image_data", export_path="array.c"):    
+        c_array_str = self.__convert(img_path, w, h, array_name)
 
-    def __create_array(self, array_name):
+
+    def convert_and_print(self, img_path, w, h, array_name="image_data"):    
+        c_array_str = self.__convert(img_path, w, h, array_name)
+        print(c_array_str)
+    
+       
+    ##############################-Convertion private methodes-##############################
+    
+    def __convert(self, img_path, w, h, array_name="image_data"):
         
-        n_element = self.w * int(self.h/PIXEL_IN_PAGE)
-        c_array = f"uint8_t {array_name}[{n_element}] = " + "{\n\n"
+        img = self.convert_BW(img_path, w, h)
+        img_data = self.__convert_image_to_array(img)
+        c_array_str = self.__create_c_array(img_data, array_name)
+        return c_array_str
+    
+    def __convert_image_to_array(self, img):
         
-        for i in range(n_element):
-            c_array += f"0x{self.image_data[i]:02X}"
-            if i < n_element - 1:
+        image_data = []
+        pixels = img.load() #Read image content
+        w, h = img.size
+        
+        #Insert image "metadata" into the array
+        image_data.append(w)
+        image_data.append(h)
+        image_data.append(int(math.ceil(w/PIXEL_IN_BYTE)))
+        
+        #Flatten image width pixels into byte
+        for y in range (0, h): #For all pixel in height 
+            
+            for pixelgroup in range(0, w, PIXEL_IN_BYTE): #For each group of 8 pixel in a row
+                
+                byte = 0
+                
+                for bit in range(PIXEL_IN_BYTE):  #For each pixel of this group    
+                    x = pixelgroup + bit
+                    if pixels[x, y] == WHITE_PIXEL_VALUE: #If the image data at this position is white
+                        byte |= (1 << bit)
+                        
+                image_data.append(byte) #Place the maked byte into an array
+                
+        return image_data
+
+    def __create_c_array(self, image_data, array_name="img"):
+        
+        h = image_data[1]
+        element_in_line = image_data[2]
+        n_element = h * element_in_line #Calculate the number of element in the exported array
+        
+        c_array = f"const SSD1306_IMG {array_name}[{n_element + N_METADATA}] = " + "{\n\n" #Create the array header
+        c_array += f"0x{image_data[0]:02X}, 0x{image_data[1]:02X}, 0x{image_data[2]:02X},\n" #Append image information line
+        
+        for i in range(0, n_element):
+            
+            c_array += f"0x{image_data[i + N_METADATA]:02X}" #Append the array with the byte in a C_array format
+            
+            if i < n_element - 1: #If we are not on the last line
                 c_array += ", "
-            if (i + 1) % self.w == 0:
+                
+            if (i + 1) % element_in_line == 0: #If we are on the last pixel of the image, back to line
                 c_array  += "\n"
                 
-        c_array += "\n};"
+        c_array += "\n};" #Closing the array
             
         return c_array
         
-    def __export_array(self, export_path, array_name):
-        
-        f = open(export_path, "w")
-        f.write(self.__create_array(array_name))
-    
-    def export_image(self, export_path="array.c", array_name="image_data"):
-        
-        self.__convert_image_to_array()
-        self.__export_array(export_path, array_name)
-        
-    def print_array(self, array_name="image_data"):
-        
-        self.__convert_image_to_array()
-        print(self.__create_array(array_name))
-
 """
                                                                                                     
                                                                                                     

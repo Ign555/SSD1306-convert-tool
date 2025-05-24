@@ -42,8 +42,8 @@ class SSD1306ConvertionTool(tk.Tk):
         
         ##############################-Init converters tool-##############################
         
-        self.font_converter = sfc.SSD1306FontConverter()
-        self.img_converter = sic.SSD1306FontConverter()
+        #self.font_converter = sfc.SSD1306FontConverter()
+        self.img_converter = sic.SSD1306ImgCoverter()
         
         ##############################-Init GUI-##############################
         
@@ -52,6 +52,7 @@ class SSD1306ConvertionTool(tk.Tk):
             
         print("Hello world")
         
+        self.img_converter.convert_and_print("test.png", 32, 32, "img1")
         
     
 """
