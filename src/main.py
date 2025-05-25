@@ -30,6 +30,10 @@ import tkinter as tk
 import SSD1306FontConverter as sfc
 import SSD1306ImgCoverter as sic
 
+##############################-App GUI class modules-##############################
+
+import MainGUI as mg
+
 """
 *
 * Main
@@ -38,21 +42,20 @@ import SSD1306ImgCoverter as sic
 
 class SSD1306ConvertionTool(tk.Tk):
         
-    def __init__(self, gui=True):
+    def __init__(self):
         
         ##############################-Init converters tool-##############################
         
-        #self.font_converter = sfc.SSD1306FontConverter()
+        self.font_converter = sfc.SSD1306FontConverter()
         self.img_converter = sic.SSD1306ImgCoverter()
         
         ##############################-Init GUI-##############################
+        self.font_converter.convert_and_export("tilemap.bmp", 6, 8)
+        super().__init__()    
         
-        if gui:
-            super().__init__()
-            
-        print("Hello world")
+        self.main_gui = mg.MainGUI(self)
         
-        self.img_converter.convert_and_print("test.png", 32, 32, "img1")
+        
         
     
 """
@@ -63,7 +66,6 @@ class SSD1306ConvertionTool(tk.Tk):
 
 if __name__ == "__main__":
     
-    
-    app = SSD1306ConvertionTool(gui=sys.argv[0])
+    app = SSD1306ConvertionTool()
     app.mainloop()
 

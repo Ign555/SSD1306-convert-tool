@@ -7,7 +7,7 @@
 * Created by Ign555
 * Version : v1.0
 * File Creation : 18/04/2025
-* ( does not work )
+* 
 *
 """ 
 
@@ -43,26 +43,23 @@ N_METADATA = 3
 
 class SSD1306ImgCoverter:
     
-    def __init__(self, screen_height=64):
+    def __init__(self):
+        pass
         
-        print("ImgConverter starting...")
-        
-     
-    ##############################-Convert methodes ( public )-##############################   
+    ##############################-Convertion methodes ( public )-##############################   
     
-    def convert_BW(self, img_path, w, h):
+    def convert_and_export(self, img_path, w=-1, h=-1, array_name="image_data", export_path="array.c"):    
         
-        img = Image.open(img_path)
-        img = img.resize((w, h)) #Resize image 
-        img = img.convert('1') #Convert image to black & white
+        if array_name == "": array_name = "image_data"
+        if export_path == "": export_path = "array.c"
         
-        return img
-    
-    def convert_and_export(self, img_path, w, h, array_name="image_data", export_path="array.c"):    
         c_array_str = self.__convert(img_path, w, h, array_name)
+        
+        with open(export_path, "w") as f:
+            f.write(c_array_str)
 
-
-    def convert_and_print(self, img_path, w, h, array_name="image_data"):    
+    def convert_and_print(self, img_path, w=-1, h=-1, array_name="image_data"): 
+        if array_name == "": array_name = "image_data"
         c_array_str = self.__convert(img_path, w, h, array_name)
         print(c_array_str)
     
@@ -75,6 +72,18 @@ class SSD1306ImgCoverter:
         img_data = self.__convert_image_to_array(img)
         c_array_str = self.__create_c_array(img_data, array_name)
         return c_array_str
+    
+    def __convert_BW(self, img_path, w, h):
+        
+        img = Image.open(img_path)
+        
+        if w != -1 and h != -1:
+            img = img.resize((w, h)) #Resize image 
+            
+        img = img.convert('1') #Convert image to black & white
+        
+        return img
+    
     
     def __convert_image_to_array(self, img):
         
@@ -109,7 +118,8 @@ class SSD1306ImgCoverter:
         element_in_line = image_data[2]
         n_element = h * element_in_line #Calculate the number of element in the exported array
         
-        c_array = f"const SSD1306_IMG {array_name}[{n_element + N_METADATA}] = " + "{\n\n" #Create the array header
+        c_array = '#include "SSD1306_img.h"\n\n'
+        c_array += f"const SSD1306_IMG {array_name}[{n_element + N_METADATA}] = " + "{\n\n" #Create the array header
         c_array += f"0x{image_data[0]:02X}, 0x{image_data[1]:02X}, 0x{image_data[2]:02X},\n" #Append image information line
         
         for i in range(0, n_element):

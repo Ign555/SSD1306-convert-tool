@@ -17,6 +17,8 @@ Have to be write
 
 ## Changelog
 
+15/05/2025 : POO + Image file creator for SSD1306 and same for font
+
 17/04/2025 : Project beginning  
 
 ## To do list
