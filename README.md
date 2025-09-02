@@ -9,23 +9,30 @@ No instalation procedure requiered. You only have to unzip the downloaded file a
 
 ## Use 
 
-Have to be write
+To use, execute ```main.py```
+
+You will have different option to add in the command :  
+
+```-w``` or ```-i``` ```[YOUR INPUT FILE'S NAME]``` These to option are made to choose between the covertion to an image data or the convertion to a font.  
+```-o``` ```[YOUR OUTPUT FILE'S NAME]``` This option gives the output file's name. ( optional )  
+```-n``` ```[YOUR OUTPUT ARRAY'S NAME]``` This option gives the name of the array in the output file. ( optional ) 
+```-W ``` and  ```-H ``` ```[YOUR OUTPUT ARRAY'S NAME]``` These options gives the dimension of the final image or the size of a character in a font. It is only optional for the image convertion  
 
 ### Documentation  
 
-Have to be write 
+No documentation available  
 
 ## Changelog
 
-15/05/2025 : POO + Image file creator for SSD1306 and same for font
+02/09/2025 : Add Image converter and font converter. There use are merge into a main file  
+
+15/05/2025 : POO + Image file creator for SSD1306 and same for font  
 
 17/04/2025 : Project beginning  
 
 ## To do list
 
-* Add an image to font array convertion  
-* Add image to array convertion  
-* Merge all  
+* GUI
 
 ### License
 

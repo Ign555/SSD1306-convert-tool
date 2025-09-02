@@ -100,7 +100,7 @@ if __name__ == "__main__":
         
     if args.Writer:
         
-        print("Writer selected")
+        print("Converting the font map...")
         
         if args.Width and args.Height:
             app.font_converter.convert_and_export(args.Writer, int(args.Width), int(args.Height), array_name=name, export_path=output)
@@ -109,5 +109,12 @@ if __name__ == "__main__":
         
         
     if args.Image:
-        app.img_converter.convert_and_export(args.Image, array_name=name, export_path=output)
+        
+        print("Converting the image...")
+        
+        if args.Width and args.Height:
+            app.img_converter.convert_and_export(args.Image, int(args.Width), int(args.Height), array_name=name, export_path=output)
+        else:
+            app.img_converter.convert_and_export(args.Image, array_name=name, export_path=output)
+        
         
