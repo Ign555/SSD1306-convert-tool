@@ -123,7 +123,6 @@ class SSD1306FontConverter:
         
         h = font_data[1]
         element_in_line = int((font_data[0]-1) / PIXEL_IN_PAGE + 1)
-        print(element_in_line)
         n_element = int( NUMBER_OF_CHAR * element_in_line * h ) #Calculate the number of element in the exported array
         
         #File header

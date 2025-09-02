@@ -20,6 +20,7 @@
 ##############################-Casuals modules-##############################
 
 import sys
+import argparse
 
 ##############################-GUI modules-##############################
 
@@ -50,7 +51,8 @@ class SSD1306ConvertionTool(tk.Tk):
         self.img_converter = sic.SSD1306ImgCoverter()
         
         ##############################-Init GUI-##############################
-        self.font_converter.convert_and_export("tilemap.bmp", 16, 16)
+        #self.font_converter.convert_and_export("tilemap.bmp", 8, 8)
+        #self.img_converter.convert_and_export("tilemap.bmp")
         super().__init__()    
         
         self.main_gui = mg.MainGUI(self)
@@ -66,6 +68,46 @@ class SSD1306ConvertionTool(tk.Tk):
 
 if __name__ == "__main__":
     
+    # Initialize Application
     app = SSD1306ConvertionTool()
     app.mainloop()
 
+    # Initialize parser
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument("-w", "--Writer", help = "Select font-writter converter input")
+    parser.add_argument("-i", "--Image", help = "Select image converter input")
+    parser.add_argument("-o", "--Output", help = "Output file")
+    parser.add_argument("-n", "--Name", help = "Array name")
+    parser.add_argument("-W", "--Width", help = "Font / Image width")
+    parser.add_argument("-H", "--Height", help = "Font / Image Height")
+    
+    #Get Argument
+    args = parser.parse_args()
+    
+    output = ""
+    name = ""
+    
+    if args.Output:
+        output = args.Output
+    else:
+        output = "data.c"
+    
+    if args.Name:
+        name = args.Name
+    else:
+        name = "data"
+        
+    if args.Writer:
+        
+        print("Writer selected")
+        
+        if args.Width and args.Height:
+            app.font_converter.convert_and_export(args.Writer, int(args.Width), int(args.Height), array_name=name, export_path=output)
+        else:
+            print("Size must be given")
+        
+        
+    if args.Image:
+        app.img_converter.convert_and_export(args.Image, array_name=name, export_path=output)
+        

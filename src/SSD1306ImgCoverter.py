@@ -68,7 +68,7 @@ class SSD1306ImgCoverter:
     
     def __convert(self, img_path, w, h, array_name="image_data"):
         
-        img = self.convert_BW(img_path, w, h)
+        img = self.__convert_BW(img_path, w, h)
         img_data = self.__convert_image_to_array(img)
         c_array_str = self.__create_c_array(img_data, array_name)
         return c_array_str
