@@ -50,7 +50,7 @@ class SSD1306ConvertionTool(tk.Tk):
         self.img_converter = sic.SSD1306ImgCoverter()
         
         ##############################-Init GUI-##############################
-        self.font_converter.convert_and_export("tilemap.bmp", 6, 8)
+        self.font_converter.convert_and_export("tilemap.bmp", 16, 16)
         super().__init__()    
         
         self.main_gui = mg.MainGUI(self)

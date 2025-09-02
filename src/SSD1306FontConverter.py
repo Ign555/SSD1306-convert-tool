@@ -31,10 +31,12 @@ from PIL import Image
 *
 """
 
+NUMBER_OF_CHAR = 80
+ASCII_TABLE_SIZE = 128
 WHITE_PIXEL_VALUE = 255
 PIXEL_IN_PAGE = 8
 PIXEL_IN_BYTE = 8
-N_METADATA = 3
+N_METADATA = 2
 
 """
 *
@@ -98,7 +100,6 @@ class SSD1306FontConverter:
         #Insert image "metadata" into the array
         font_data.append(fw)
         font_data.append(fh)
-        font_data.append(int(math.ceil(fw/PIXEL_IN_BYTE))) #Number of byte for one character
 
         #For each line
         for y in range(n_charater_column):
@@ -121,27 +122,29 @@ class SSD1306FontConverter:
     def __create_c_array(self, font_data, array_name="font"):
         
         h = font_data[1]
-        element_in_line = font_data[2]
-        n_element = 128 *  element_in_line * h #Calculate the number of element in the exported array
+        element_in_line = int((font_data[0]-1) / PIXEL_IN_PAGE + 1)
+        print(element_in_line)
+        n_element = int( NUMBER_OF_CHAR * element_in_line * h ) #Calculate the number of element in the exported array
         
         #File header
         c_array = '#include "SSD1306_writer.h"\n\n'
         c_array += f"const SSD1306_FONT {array_name}[{n_element + N_METADATA}] = " + "{\n\n" #Create the array header
-        c_array += f"0x{font_data[0]:02X}, 0x{font_data[1]:02X}, 0x{font_data[2]:02X},\n\n" #Append image information line
+        c_array += f"0x{font_data[0]:02X}, 0x{font_data[1]:02X},\n\n" #Append image information line
         
-        for i in range(128):
+        for i in range(ASCII_TABLE_SIZE - NUMBER_OF_CHAR, ASCII_TABLE_SIZE):
             
-            character = chr(i) if i > 64 else ''
+            character = chr(i) if i >= ( ASCII_TABLE_SIZE - NUMBER_OF_CHAR ) else ''
             c_array += f"//ascii : {i} -> {character}\n"
             
             for character_row in range(h): #For each character's row
-                c_array += f"0x{font_data[i + N_METADATA][character_row]:02X}" #Append the array with the byte in a C_array format
                 
-                if i < n_element - 1: #If we are not on the last line
-                    c_array += ", "
-                
-                if (i + 1) % element_in_line == 0: #If we are on the last pixel of the image, back to line
-                    c_array  += "\n"
+                for row_bytes in range(element_in_line):
+                    c_array += f"0x{font_data[i + N_METADATA][character_row]:02X}" #Append the array with the byte in a C_array format
+                    
+                    if i < ASCII_TABLE_SIZE - 1 or row_bytes < element_in_line - 1 or character_row < h - 1: #If we are not on the last line
+                        c_array += ", "
+
+                c_array  += "\n"
             
             
             c_array  += "\n\n\n" #After each charater section, double jump
