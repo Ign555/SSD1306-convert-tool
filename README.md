@@ -15,8 +15,8 @@ You will have different option to add in the command :
 
 ```-w``` or ```-i``` ```[YOUR INPUT FILE'S NAME]``` These to option are made to choose between the covertion to an image data or the convertion to a font.  
 ```-o``` ```[YOUR OUTPUT FILE'S NAME]``` This option gives the output file's name. ( optional )  
-```-n``` ```[YOUR OUTPUT ARRAY'S NAME]``` This option gives the name of the array in the output file. ( optional ) 
-```-W ``` and  ```-H ``` ```[YOUR OUTPUT ARRAY'S NAME]``` These options gives the dimension of the final image or the size of a character in a font. It is only optional for the image convertion  
+```-n``` ```[YOUR OUTPUT ARRAY'S NAME]``` This option gives the name of the array in the output file. ( optional )   
+```-W ``` and  ```-H ``` These options gives the dimension of the final image or the size of a character in a font. It is only optional for the image convertion  
 
 ### Documentation  
 
