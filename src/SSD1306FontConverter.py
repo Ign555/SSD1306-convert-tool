@@ -138,7 +138,7 @@ class SSD1306FontConverter:
             for character_row in range(h): #For each character's row
                 
                 for row_bytes in range(element_in_line):
-                    c_array += f"0x{font_data[i + N_METADATA][character_row]:02X}" #Append the array with the byte in a C_array format
+                    c_array += f"0x{font_data[i + N_METADATA - (ASCII_TABLE_SIZE - NUMBER_OF_CHAR)][character_row]:02X}" #Append the array with the byte in a C_array format
                     
                     if i < ASCII_TABLE_SIZE - 1 or row_bytes < element_in_line - 1 or character_row < h - 1: #If we are not on the last line
                         c_array += ", "
