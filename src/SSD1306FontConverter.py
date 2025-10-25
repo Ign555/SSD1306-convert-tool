@@ -24,6 +24,7 @@ import math
 ##############################-Processing modules-##############################
 
 from PIL import Image
+from PIL import ImageChops
 
 """
 *
@@ -51,12 +52,12 @@ class SSD1306FontConverter:
     
     ##############################-Convertion methodes ( public )-##############################  
     
-    def convert_and_export(self, img_path, fw, fh, w=-1, h=-1, array_name="font_data", export_path="font.c"):    
+    def convert_and_export(self, img_path, fw, fh, w=-1, h=-1, invert=False, array_name="font_data", export_path="font.c"):    
         
         if array_name == "": array_name = "font_data"
         if export_path == "": export_path = "font.c"
         
-        c_array_str = self.__convert(img_path, w, h, fw, fh, array_name)
+        c_array_str = self.__convert(img_path, w, h, fw, fh, array_name, invert)
         
         with open(export_path, "w") as f:
             f.write(c_array_str)
@@ -69,9 +70,13 @@ class SSD1306FontConverter:
        
     ##############################-Convertion private methodes-##############################
     
-    def __convert(self, img_path, w, h, fw, fh, array_name):
+    def __convert(self, img_path, w, h, fw, fh, array_name, invert):
         
         img = self.__convert_BW(img_path, w, h)
+        
+        if(invert):
+            img = ImageChops.invert(img)
+        
         font_data = self.__convert_font_table_to_array(img, fw, fh)
         c_array_str = self.__create_c_array(font_data, array_name)
         return c_array_str
@@ -129,7 +134,7 @@ class SSD1306FontConverter:
         c_array = '#include "SSD1306_writer.h"\n\n'
         c_array += f"const SSD1306_FONT {array_name}[{n_element + N_METADATA}] = " + "{\n\n" #Create the array header
         c_array += f"0x{font_data[0]:02X}, 0x{font_data[1]:02X},\n\n" #Append image information line
-        
+
         for i in range(ASCII_TABLE_SIZE - NUMBER_OF_CHAR, ASCII_TABLE_SIZE):
             
             character = chr(i) if i >= ( ASCII_TABLE_SIZE - NUMBER_OF_CHAR ) else ''

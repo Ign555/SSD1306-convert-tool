@@ -81,12 +81,14 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--Name", help = "Array name")
     parser.add_argument("-W", "--Width", help = "Font / Image width")
     parser.add_argument("-H", "--Height", help = "Font / Image Height")
+    parser.add_argument("-I", "--Invert", help = "B/W Invert", action="store_true")
     
     #Get Argument
     args = parser.parse_args()
     
     output = ""
     name = ""
+    invert = False
     
     if args.Output:
         output = args.Output
@@ -97,13 +99,16 @@ if __name__ == "__main__":
         name = args.Name
     else:
         name = "data"
-        
+     
+    if args.Invert:
+        invert = True
+     
     if args.Writer:
         
         print("Converting the font map...")
         
         if args.Width and args.Height:
-            app.font_converter.convert_and_export(args.Writer, int(args.Width), int(args.Height), array_name=name, export_path=output)
+            app.font_converter.convert_and_export(args.Writer, int(args.Width), int(args.Height), invert=invert, array_name=name, export_path=output)
         else:
             print("Size must be given")
         
