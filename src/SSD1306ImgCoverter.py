@@ -23,7 +23,7 @@ import math
 
 ##############################-Processing modules-##############################
 
-from PIL import Image
+from PIL import Image, ImageChops
 
 """
 *
@@ -48,12 +48,12 @@ class SSD1306ImgCoverter:
         
     ##############################-Convertion methodes ( public )-##############################   
     
-    def convert_and_export(self, img_path, w=-1, h=-1, array_name="image_data", export_path="array.c"):    
+    def convert_and_export(self, img_path, w=-1, h=-1, invert=False, array_name="image_data", export_path="array.c"):    
         
         if array_name == "": array_name = "image_data"
         if export_path == "": export_path = "array.c"
         
-        c_array_str = self.__convert(img_path, w, h, array_name)
+        c_array_str = self.__convert(img_path, w, h, invert, array_name)
         
         with open(export_path, "w") as f:
             f.write(c_array_str)
@@ -66,9 +66,13 @@ class SSD1306ImgCoverter:
        
     ##############################-Convertion private methodes-##############################
     
-    def __convert(self, img_path, w, h, array_name="image_data"):
+    def __convert(self, img_path, w, h, invert=False, array_name="image_data"):
         
         img = self.__convert_BW(img_path, w, h)
+        
+        if invert:
+            img = ImageChops.invert(img)
+        
         img_data = self.__convert_image_to_array(img)
         c_array_str = self.__create_c_array(img_data, array_name)
         return c_array_str

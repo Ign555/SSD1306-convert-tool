@@ -118,7 +118,7 @@ if __name__ == "__main__":
         print("Converting the image...")
         
         if args.Width and args.Height:
-            app.img_converter.convert_and_export(args.Image, int(args.Width), int(args.Height), array_name=name, export_path=output)
+            app.img_converter.convert_and_export(args.Image, int(args.Width), int(args.Height), invert=invert, array_name=name, export_path=output)
         else:
             app.img_converter.convert_and_export(args.Image, array_name=name, export_path=output)
         
