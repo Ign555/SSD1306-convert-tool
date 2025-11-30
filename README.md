@@ -24,9 +24,13 @@ No documentation available
 
 ## Changelog
 
+30/11/2025 : Release v0.9
+
+25/10/2025 : Add revert image option  
+
 02/09/2025 : Add Image converter and font converter. There use are merge into a main file  
 
-15/05/2025 : POO + Image file creator for SSD1306 and same for font  
+15/05/2025 : OOP + Image file creator for SSD1306 and same for font  
 
 17/04/2025 : Project beginning  
 
